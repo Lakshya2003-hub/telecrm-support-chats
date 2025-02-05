@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TeleCRM Support Chat Analysis</title>
+    <meta name="author" content="TeleCRM">
+    <meta content="Display TeleCRM support chat queries analysis">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    
+    <style>
+        .table td {
+            max-width: 500px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            position: relative;
+            background: inherit;
+        }
+        
+        .table td:hover {
+            white-space: normal;
+            overflow: visible;
+            z-index: 1;
+            background: #fff; /* Ensures text is readable when overlapping */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 15px;
+            margin: -5px;
+            transition: all 0.3s ease;
+        }
+    
+        /* Specific styling for the queries column */
+        .table td:nth-child(2) {
+            position: relative;
+            background: inherit;
+        }
+    
+        .table td:nth-child(2):hover {
+            transform: translateY(2px);
+        }
+    
+        /* Custom scrollbar for better appearance */
+        .table td::-webkit-scrollbar {
+            width: 6px;
+        }
+    
+        .table td::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+    
+        .table td::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+    
+        /* Table styling */
+        .table {
+            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0 4px;
+        }
+    
+        .table thead th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <main class="row">
+            <div class="col">
+                <h1>TeleCRM Support Chat Analysis</h1>
+                <p>Analysis of support queries from the last 24 hours, categorized by type with group and timestamp information.</p>
+                <div id="table-container"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery.csv.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="js/csv_to_html_table.js"></script>
+
+    <script>
+        CsvToHtmlTable.init({
+            csv_path: 'data/query_categories_frequency.csv',
+            element: 'table-container',
+            allow_download: true,
+            csv_options: {
+                separator: ',',
+                delimiter: '"'
+            },
+            datatables_options: {
+                paging: true,
+                pageLength: 25,
+                autoWidth: true,
+                order: [[2, "desc"]], // Sort by frequency by default
+                columnDefs: [
+                    {
+                        targets: 1, // Queries column
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                // Show full text on hover
+                                return `<div title="${data}">${data}</div>`;
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        targets: [0, 2], // Category and Frequency columns
+                        className: 'font-weight-bold'
+                    }
+                ],
+                language: {
+                    search: "Search queries:",
+                    lengthMenu: "Show _MENU_ categories per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ query categories"
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

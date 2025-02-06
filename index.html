@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
@@ -14,6 +13,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     
     <style>
+        /* Ensure consistent row height */
         .table td {
             max-width: 500px;
             overflow: hidden;
@@ -22,57 +22,53 @@
             transition: all 0.3s ease;
             position: relative;
             background: inherit;
+            height: 40px;
+            vertical-align: middle;
         }
-        
+
+        /* Expanding effect on hover */
         .table td:hover {
             white-space: pre-line;
             overflow: visible;
-            z-index: 1;
-            background: #fff; /* Ensures text is readable when overlapping */
+            background: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 4px;
-            padding: 15px;
-            margin: -5px;
+            padding: 10px;
             transition: all 0.3s ease;
+            height: auto;
         }
-    
-        /* Specific styling for the queries column */
-        .table td:nth-child(2) {
-            position: relative;
-            background: inherit;
+
+        /* Ensure alternating row colors are detected */
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f2f2f2;
         }
-    
-        .table td:nth-child(2):hover {
-            transform: translateY(2px);
+
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: #e0e0e0; /* Slightly darker row */
         }
-    
-        /* Custom scrollbar for better appearance */
-        .table td::-webkit-scrollbar {
-            width: 6px;
+
+        /* Query container to expand height on hover */
+        .query-container {
+            display: block;
+            height: 40px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-    
-        .table td::-webkit-scrollbar-track {
-            background: #f1f1f1;
+
+        .query-container:hover {
+            height: auto;
+            overflow: visible;
         }
-    
-        .table td::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 3px;
+
+        /* Normal query separator */
+        .query-line {
+            display: block;
+            padding: 3px 0;
+            border-bottom: 1px solid #c0c0c0; /* Default separator */
         }
-    
-        /* Table styling */
-        .table {
-            margin-top: 20px;
-            border-collapse: separate;
-            border-spacing: 0 4px;
-        }
-    
-        .table thead th {
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            position: sticky;
-            top: 0;
-            z-index: 2;
+
+        .query-line:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
@@ -108,21 +104,18 @@
                 paging: true,
                 pageLength: 25,
                 autoWidth: true,
-                order: [[2, "desc"]], // Sort by frequency by default
+                order: [[2, "desc"]],
                 columnDefs: [
                     {
                         targets: 1, // Queries column
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                // Show full text on hover
-                                return `<div title="${data}">${data}</div>`;
+                                let queries = data.split("\n"); // Split queries into separate lines
+                                let formattedQueries = queries.map(q => `<span class="query-line">${q}</span>`).join('');
+                                return `<div class="query-container">${formattedQueries}</div>`;
                             }
                             return data;
                         }
-                    },
-                    {
-                        targets: [0, 2], // Category and Frequency columns
-                        className: 'font-weight-bold'
                     }
                 ],
                 language: {
@@ -134,5 +127,4 @@
         });
     </script>
 </body>
-
 </html>

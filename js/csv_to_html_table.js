@@ -5,7 +5,6 @@ CsvToHtmlTable = {
         options = options || {};
         var csv_path = options.csv_path || "";
         var el = options.element || "table-container";
-        var allow_download = options.allow_download || false;
         var csv_options = options.csv_options || {};
         var datatables_options = options.datatables_options || {};
         var custom_formatting = options.custom_formatting || [];
@@ -52,9 +51,9 @@ CsvToHtmlTable = {
 
                 $table.DataTable(datatables_options);
 
-                if (allow_download) {
-                    $containerElement.append("<p><a class='btn btn-info' href='" + csv_path + "'><i class='glyphicon glyphicon-download'></i> Download as CSV</a></p>");
-                }
+                // if (allow_download) {
+                //     $containerElement.append("<p><a class='btn btn-info' href='" + csv_path + "'><i class='glyphicon glyphicon-download'></i> Download as CSV</a></p>");
+                // }
             });
     }
 };

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
@@ -11,19 +12,23 @@
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-    
+
     <style>
         h1 {
-            color: rgb(84,60,164);
+            font-size: 2.5rem;
+            text-align: center;
+            color: rgb(84, 60, 164);
             margin-left: 10px;
         }
+
         label {
-            color: rgb(84,60,164);
+            color: rgb(84, 60, 164);
         }
 
         .table th {
-            color: rgb(96, 73, 221)
+            color: rgb(96, 73, 221);
         }
+
         /* Ensure consistent row height */
         .table td {
             color: rgb(96, 73, 221);
@@ -36,18 +41,13 @@
             background: inherit;
             height: 40px;
             vertical-align: middle;
+            cursor: pointer;
         }
 
-        /* Expanding effect on hover */
-        .table td:hover {
-            white-space: pre-line;
-            overflow: visible;
-            background: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 4px;
-            padding: 10px;
-            transition: all 0.3s ease;
-            height: auto;
+        /* Apply hover effect to the entire row */
+        .table-striped tbody tr:hover {
+            background-color: rgba(150, 140, 210, 0.2) !important;
+            transition: background-color 0s ease-in;
         }
 
         /* Ensure alternating row colors are detected */
@@ -56,10 +56,11 @@
         }
 
         .table-striped tbody tr:nth-of-type(even) {
-            background-color: #e0e0e0; /* Slightly darker row */
+            background-color: #e6e4e9;
+            /* Slightly darker row */
         }
 
-        /* Query container to expand height on hover */
+        /* Query container */
         .query-container {
             display: block;
             height: 40px;
@@ -67,20 +68,107 @@
             text-overflow: ellipsis;
         }
 
-        .query-container:hover {
+        /* .query-container:hover {
             height: auto;
             overflow: visible;
-        }
+        } */
 
         /* Normal query separator */
         .query-line {
             display: block;
             padding: 3px 0;
-            border-bottom: 1px solid rgb(192, 185, 233); /* Default separator */
+            border-bottom: 1px solid rgb(192, 185, 233);
         }
 
         .query-line:last-child {
             border-bottom: none;
+        }
+
+        /* 🔹 MODAL STYLING */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 75%;
+            height: 75%;
+            /* max-width: 600px; */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 15px;
+            color: rgb(84, 60, 164);
+        }
+
+        .modal-queries {
+            max-height: 75%;
+            overflow-y: auto;
+            border-top: 2px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .modal-queries .query-line {
+            padding: 10px 0;
+            border-bottom: 1px solid rgb(210, 205, 236);
+        }
+
+        .modal-queries .query-line:last-child {
+            border-bottom: none;
+        }
+
+        .modal-footer {
+            margin-top: 15px;
+            font-weight: bold;
+            color: rgb(84, 60, 164);
+
+            #modalFrequency {
+                margin-left: 5px;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            color: red;
+        }
+
+        /* Adjust column width using nth-child */
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            /* Category */
+            width: 30%;
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            /* Queries */
+            width: 50%;
+        }
+
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            /* Frequency */
+            width: 20%;
         }
     </style>
 </head>
@@ -88,14 +176,24 @@
 <body>
     <div class="container-fluid">
         <main class="row">
-            <div class="col">               
-                <div class="d-flex align-items-center mb-3 mt-3">
-                    <img src="./assets/icon-solid.png" alt="" height="50px" class="me-3">                                
-                    <h1 class="mb-0">TeleCRM Support Chat Analysis</h1>               
+            <div class="col">
+                <div class="d-flex align-items-center mb-3 mt-3 justify-content-center">
+                    <img src="./assets/icon-solid.png" alt="" height="50px" class="me-3">
+                    <h1 class="mb-0">TeleCRM Support Chat Analysis</h1>
                 </div>
                 <div id="table-container"></div>
             </div>
         </main>
+    </div>
+
+    <!-- 🔹 MODAL OVERLAY -->
+    <div class="overlay" id="modalOverlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalCategory"></h2>
+            <div class="modal-queries" id="modalQueries"></div>
+            <div class="modal-footer">Frequency: <span id="modalFrequency"></span></div>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -110,7 +208,6 @@
         CsvToHtmlTable.init({
             csv_path: 'data/query_categories_frequency.csv',
             element: 'table-container',
-            allow_download: true,
             csv_options: {
                 separator: ',',
                 delimiter: '"'
@@ -120,26 +217,77 @@
                 pageLength: 25,
                 autoWidth: true,
                 order: [[2, "desc"]],
+                dom: '<"row"<"col-sm-6"f><"col-sm-6"l>><"row"<"col-sm-12"tr>><"row"<"col-sm-5"i><"col-sm-7"p>>',
                 columnDefs: [
                     {
                         targets: 1, // Queries column
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                let queries = data.split("\n"); // Split queries into separate lines
-                                let formattedQueries = queries.map(q => `<span class="query-line">${q}</span>`).join('');
-                                return `<div class="query-container">${formattedQueries}</div>`;
+                        render: function (data, type, row) {
+                            // Decode the queries and create a preview
+                            let queries = data.split("\n").map(q => decodeURIComponent(q));
+                            let previewQueries = queries.slice(0, 3).join('\n'); // Show first 3 queries
+                            if (queries.length > 3) {
+                                previewQueries += '\n...';
                             }
-                            return data;
+                            return `<div class="query-container">${previewQueries}</div>`;
+                        }
+                    },
+                    {
+                        targets: "_all", // Apply to all columns
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            // Attach click event to the entire row (`tr`)
+                            $(td).closest("tr").attr({
+                                "data-category": rowData[0], // Category
+                                "data-queries": JSON.stringify(rowData[1].split("\n")), // Queries
+                                "data-frequency": rowData[2] // Frequency
+                            }).css("cursor", "pointer")
+                                .off("click")
+                                .on("click", function () {
+                                    openModalFromRow(this);
+                                });
                         }
                     }
                 ],
                 language: {
                     search: "Search queries:",
-                    lengthMenu: "Show _MENU_ categories per page",
-                    info: "Showing _START_ to _END_ of _TOTAL_ query categories"
                 }
             }
         });
+
+
+        function openModalFromRow(rowElement) {
+            let category = rowElement.getAttribute("data-category");
+            let queries = JSON.parse(rowElement.getAttribute("data-queries"));
+            let frequency = rowElement.getAttribute("data-frequency");
+
+            openModal(category, queries, frequency);
+        }
+
+        function openModal(category, queries, frequency) {
+            document.getElementById("modalCategory").innerText = category;
+
+            // ✅ Decode queries before displaying
+            let decodedQueries = queries.map(q => decodeURIComponent(q))
+                .map(q => `<div class="query-line">${q}</div>`)
+                .join('');
+
+            document.getElementById("modalQueries").innerHTML = decodedQueries;
+            document.getElementById("modalFrequency").innerText = frequency;
+            document.getElementById("modalOverlay").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("modalOverlay").style.display = "none";
+        }
+
+        // Add click handler for the modal overlay
+        document.getElementById("modalOverlay").addEventListener("click", function(event) {
+            // Close if clicking the overlay (outside the modal content)
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+
     </script>
 </body>
+
 </html>

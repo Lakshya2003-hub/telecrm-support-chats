@@ -13,8 +13,20 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     
     <style>
+        h1 {
+            color: rgb(84,60,164);
+            margin-left: 10px;
+        }
+        label {
+            color: rgb(84,60,164);
+        }
+
+        .table th {
+            color: rgb(96, 73, 221)
+        }
         /* Ensure consistent row height */
         .table td {
+            color: rgb(96, 73, 221);
             max-width: 500px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -64,7 +76,7 @@
         .query-line {
             display: block;
             padding: 3px 0;
-            border-bottom: 1px solid #c0c0c0; /* Default separator */
+            border-bottom: 1px solid rgb(192, 185, 233); /* Default separator */
         }
 
         .query-line:last-child {
@@ -76,8 +88,11 @@
 <body>
     <div class="container-fluid">
         <main class="row">
-            <div class="col">
-                <h1>TeleCRM Support Chat Analysis</h1>
+            <div class="col">               
+                <div class="d-flex align-items-center mb-3 mt-3">
+                    <img src="./assets/icon-solid.png" alt="" height="50px" class="me-3">                                
+                    <h1 class="mb-0">TeleCRM Support Chat Analysis</h1>               
+                </div>
                 <div id="table-container"></div>
             </div>
         </main>
